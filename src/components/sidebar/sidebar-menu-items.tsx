@@ -1,6 +1,6 @@
 "use client";
 
-import { Book, Home } from "lucide-react";
+import { Home } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { SidebarMenuButton, SidebarMenuItem } from "../ui/sidebar";
 import Link from "next/link";

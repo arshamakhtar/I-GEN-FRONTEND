@@ -7,7 +7,7 @@ import { authClient } from "~/lib/auth-client";
 export default function CustomerPortalRedirect() {
   useEffect(() => {
     const portal = async () => {
-      await authClient.customer.portal();
+      await (authClient.customer.portal as () => Promise<void>)();
     };
     void portal();
   }, []);

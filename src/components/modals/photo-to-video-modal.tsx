@@ -263,6 +263,7 @@ export function PhotoToVideoModal({
                     <img
                       src={selectedPhotoUrl}
                       crossOrigin="anonymous"
+                      alt="Selected photo for video generation"
                       className="max-h-[340px] max-w-full rounded-xl border object-contain md:max-w-[340px]"
                     />
                     <Button
@@ -303,6 +304,7 @@ export function PhotoToVideoModal({
                         <img
                           key={item.s3Key}
                           crossOrigin="anonymous"
+                          alt="Sample photo thumbnail"
                           className="h-14 w-14 cursor-pointer rounded border object-cover"
                           src={item.url}
                           onClick={() => {

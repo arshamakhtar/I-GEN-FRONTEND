@@ -16,7 +16,7 @@ export const photoToVideo = inngest.createFunction(
       limit: 5,
       key: "event.data.userId",
     },
-    onFailure: async ({ event, error }) => {
+    onFailure: async ({ event }) => {
       await db.photoToVideoGeneration.update({
         where: {
           id: (event?.data?.event.data as { photoToVideoId: string })
@@ -100,7 +100,7 @@ export const photoToVideo = inngest.createFunction(
             input: {
               image_url: photoUrl,
               audio_url: audioUrl,
-              prompt: photoToVideo.script || "A person talking naturally",
+              prompt: photoToVideo.script ?? "A person talking naturally",
               num_frames: 145,
               resolution: "720p",
               seed: 42,
@@ -175,7 +175,7 @@ export const translateVideo = inngest.createFunction(
       limit: 5,
       key: "event.data.userId",
     },
-    onFailure: async ({ event, error }) => {
+    onFailure: async ({ event }) => {
       await db.videoTranslationGeneration.update({
         where: {
           id: (event?.data?.event.data as { videoTranslationId: string })
@@ -285,7 +285,7 @@ export const changeVideoAudio = inngest.createFunction(
       limit: 5,
       key: "event.data.userId",
     },
-    onFailure: async ({ event, error }) => {
+    onFailure: async ({ event }) => {
       await db.changeVideoAudioGeneration.update({
         where: {
           id: (event?.data?.event.data as { changeVideoAudioId: string })

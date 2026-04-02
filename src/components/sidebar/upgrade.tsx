@@ -6,7 +6,7 @@ import { Button } from "../ui/button";
 
 export default function Upgrade() {
   const upgrade = async () => {
-    await authClient.checkout({
+    await (authClient.checkout as (config: { products: string[] }) => Promise<void>)({
       products: [
         env.NEXT_PUBLIC_SMALL_CREDIT_PACK_ID,
         env.NEXT_PUBLIC_MEDIUM_CREDIT_PACK_ID,
