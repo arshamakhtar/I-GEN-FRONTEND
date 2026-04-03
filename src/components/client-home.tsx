@@ -18,6 +18,8 @@ import { updateCreationName } from "~/actions/creations";
 import { VideoTranslationModal } from "./modals/video-translation-modal";
 import { ChangeVideoAudioModal } from "./modals/change-video-audio-modal";
 import { toast } from "sonner";
+import { ExperimentalUIWrapper } from "./experimental-ui-wrapper";
+import { useBackgroundContext } from "~/hooks/useBackgroundContext";
 
 const features = [
   {
@@ -68,6 +70,7 @@ export function ClientHome({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const { useExperimentalUI } = useBackgroundContext();
 
   useEffect(() => {
     if (searchParams.get("purchase_success") === "true") {
@@ -117,13 +120,18 @@ export function ClientHome({
   };
 
   return (
-    <div className="p-8">
-      <h2 className="mb-6 text-lg font-semibold">Create something new</h2>
+    <ExperimentalUIWrapper>
+      <div className="p-8">
+      <h2 className={`mb-6 text-lg font-semibold ${useExperimentalUI ? 'text-white drop-shadow-lg' : ''}`}>Create something new</h2>
       <div className="mb-12 flex flex-wrap gap-4">
         {features.map((feature) => (
           <div
             key={feature.label}
-            className="group relative flex min-w-80 cursor-pointer items-center gap-4 rounded-lg bg-white p-2 transition-all duration-300"
+            className={`group relative flex min-w-80 cursor-pointer items-center gap-4 rounded-lg p-2 transition-all duration-300 ${
+              useExperimentalUI
+                ? 'bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20'
+                : 'bg-white'
+            }`}
             onClick={() => {
               if (feature.label === "Photo to Video with Portrait Avatar") {
                 setPhotoModalOpen(true);
@@ -137,19 +145,35 @@ export function ClientHome({
             }}
           >
             <div
-              className={`flex items-center justify-center rounded-lg p-3 ${feature.color}`}
+              className={`flex items-center justify-center rounded-lg p-3 ${
+                useExperimentalUI
+                  ? 'bg-white/20 text-white'
+                  : feature.color
+              }`}
             >
               <feature.icon className="h-5 w-5" />
             </div>
             <div className="relative flex w-full flex-col justify-center">
-              <div className="text-sm font-medium text-gray-900 transition-all duration-300 group-hover:-translate-y-2.5">
+              <div className={`text-sm font-medium transition-all duration-300 group-hover:-translate-y-2.5 ${
+                useExperimentalUI
+                  ? 'text-white drop-shadow-md'
+                  : 'text-gray-900'
+              }`}>
                 {feature.label}
               </div>
-              <div className="pointer-events-none absolute top-3 left-0 text-xs text-gray-500 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+              <div className={`pointer-events-none absolute top-3 left-0 text-xs opacity-0 transition-opacity duration-300 group-hover:opacity-100 ${
+                useExperimentalUI
+                  ? 'text-white/70'
+                  : 'text-gray-500'
+              }`}>
                 {feature.description}
               </div>
             </div>
-            <span className="pointer-events-none absolute inset-0 rounded-lg border border-transparent opacity-0 shadow transition-all duration-300 group-hover:border-gray-200 group-hover:opacity-100 group-hover:shadow-md"></span>
+            <span className={`pointer-events-none absolute inset-0 rounded-lg border opacity-0 shadow transition-all duration-300 ${
+              useExperimentalUI
+                ? 'border-white/20 group-hover:border-white/40 group-hover:opacity-100'
+                : 'border-transparent group-hover:border-gray-200 group-hover:opacity-100 group-hover:shadow-md'
+            }`}></span>
           </div>
         ))}
       </div>
@@ -157,7 +181,7 @@ export function ClientHome({
       {recentCreations.length > 0 && (
         <>
           <div className="mb-4 flex items-center gap-1">
-            <h2 className="text-lg font-semibold">Recent creations</h2>
+            <h2 className={`text-lg font-semibold ${useExperimentalUI ? 'text-white drop-shadow-lg' : ''}`}>Recent creations</h2>
             <Button
               variant="ghost"
               onClick={() => {
@@ -176,11 +200,19 @@ export function ClientHome({
             {recentCreations.map((item) => (
               <div
                 key={item.id}
-                className="relative w-64 flex-shrink-0 cursor-pointer overflow-hidden rounded-sm p-2 transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
+                className={`relative w-64 flex-shrink-0 cursor-pointer overflow-hidden rounded-sm p-2 transition-all duration-300 hover:-translate-y-1 ${
+                  useExperimentalUI
+                    ? 'hover:shadow-lg bg-white/5 backdrop-blur-sm border border-white/10'
+                    : 'hover:shadow-md'
+                }`}
               >
                 <div
                   onClick={() => handlePlayPause(item.id)}
-                  className="group relative h-36 w-full rounded-sm bg-gray-900"
+                  className={`group relative h-36 w-full rounded-sm ${
+                    useExperimentalUI
+                      ? 'bg-black/30'
+                      : 'bg-gray-900'
+                  }`}
                 >
                   {item.status === "completed" && item.videoUrl ? (
                     <>
@@ -213,7 +245,11 @@ export function ClientHome({
                     </>
                   ) : (
                     <div className="flex h-full w-full flex-col items-center justify-center">
-                      <div className="flex items-center gap-2 rounded-full bg-black/50 px-4 py-2 text-sm text-white">
+                      <div className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm text-white ${
+                        useExperimentalUI
+                          ? 'bg-white/10 backdrop-blur-sm border border-white/20'
+                          : 'bg-black/50'
+                      }`}>
                         {item.status === "processing" && "Currently processing"}
                         {item.status === "queued" && "In line for processing "}
                         {item.status === "failed" && "Generation failed"}
@@ -224,18 +260,26 @@ export function ClientHome({
                   )}
                   {playingVideoId !== item.id && (
                     <>
-                      <span className="bg-opacity-60 absolute bottom-2 left-2 rounded bg-gray-800 px-2 py-0.5 text-xs text-white">
+                      <span className={`absolute bottom-2 left-2 rounded px-2 py-0.5 text-xs text-white ${
+                        useExperimentalUI
+                          ? 'bg-white/10 backdrop-blur-sm border border-white/20'
+                          : 'bg-gray-800 bg-opacity-60'
+                      }`}>
                         <Languages className="h-3 w-3" />
                       </span>
                       {durations[item.id] !== undefined && (
-                        <span className="bg-opacity-60 absolute right-2 bottom-2 rounded bg-gray-800 px-2 py-0.5 text-xs text-white">
+                        <span className={`absolute right-2 bottom-2 rounded px-2 py-0.5 text-xs text-white ${
+                          useExperimentalUI
+                            ? 'bg-white/10 backdrop-blur-sm border border-white/20'
+                            : 'bg-gray-800 bg-opacity-60'
+                        }`}>
                           {Math.round(durations[item.id]!)}s
                         </span>
                       )}
                     </>
                   )}
                 </div>
-                <div className="p-3 pb-1">
+                <div className={`p-3 pb-1 ${useExperimentalUI ? 'text-white' : ''}`}>
                   {editingId === item.id ? (
                     <input
                       value={editingTitle}
@@ -250,7 +294,11 @@ export function ClientHome({
                         }
                       }}
                       type="text"
-                      className="w-full rounded border border-blue-500 bg-white p-1 text-sm shadow-sm"
+                      className={`w-full rounded border border-blue-500 p-1 text-sm shadow-sm ${
+                        useExperimentalUI
+                          ? 'bg-white/10 text-white backdrop-blur-sm border-white/40'
+                          : 'bg-white'
+                      }`}
                     />
                   ) : (
                     <div
@@ -259,12 +307,16 @@ export function ClientHome({
                         setEditingTitle(item.title);
                         setEditingType(item.type);
                       }}
-                      className="cursor-pointer text-sm"
+                      className={`cursor-pointer text-sm ${useExperimentalUI ? 'text-white drop-shadow' : ''}`}
                     >
                       {item.title}
                     </div>
                   )}
-                  <div className="mt-1 text-xs font-light tracking-wide text-gray-400">
+                  <div className={`mt-1 text-xs font-light tracking-wide ${
+                    useExperimentalUI
+                      ? 'text-white/60'
+                      : 'text-gray-400'
+                  }`}>
                     {item.date} • {item.type}
                   </div>
                 </div>
@@ -287,5 +339,6 @@ export function ClientHome({
         onOpenChange={setChangeVideoAudioOpen}
       />
     </div>
+    </ExperimentalUIWrapper>
   );
 }
